@@ -1218,7 +1218,15 @@ fail:
     return NULL;
 }
 
-/* Default options for cJSON_Parse */
+/* 
+* cJSON_Parse：JSON字符串解析总入口函数
+* 功能：接收JSON字符串（如"{\"name\":\"Tom\"}"），返回解析后的cJSON树形结构根节点
+* 核心流程：
+* 1. 跳过字符串开头的空格/换行等空白字符；
+* 2. 根据第一个字符（{/[/"/数字等）调用对应解析函数（如解析对象/数组/字符串/数字）；
+* 3. 解析完成后返回根节点，失败则返回NULL；
+* 设计思路：通过“总入口+分类型解析”的方式，适配JSON的多种数据类型
+*/
 CJSON_PUBLIC(cJSON *) cJSON_Parse(const char *value)
 {
     return cJSON_ParseWithOpts(value, 0, 0);

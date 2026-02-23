@@ -99,28 +99,48 @@ then using the CJSON_API_VISIBILITY flag to "export" the same symbols the way CJ
 #define cJSON_IsReference 256
 #define cJSON_StringIsConst 512
 
-/* The cJSON structure: */
+/* 
+ * cJSON核心数据结构：采用「双向链表+树形结构」混合设计
+ * 设计目的：用一个结构体兼容JSON的所有类型（字符串/数字/数组/对象等），简化解析与生成逻辑
+ * 关键指针作用：
+ * - next/prev：双向链表指针，串联同一层级的JSON元素（如对象的多个键值对、数组的多个元素）
+ * - child：树形结构指针，指向子层级元素（如对象里的子对象、数组里的子数组）
+ */
 typedef struct cJSON
 {
-    /* next/prev allow you to walk array/object chains. Alternatively, use GetArraySize/GetArrayItem/GetObjectItem */
+    /* 双向链表指针：串联同一层级的JSON元素（如对象的多个键值对、数组的多个元素）
+    * next：指向同层级下一个元素，prev：指向同层级上一个元素，实现双向遍历
+    */
     struct cJSON *next;
     struct cJSON *prev;
-    /* An array or object item will have a child pointer pointing to a chain of the items in the array/object. */
+    /* 子节点指针：指向当前节点的下一层级节点（如对象里的子对象、数组里的子数组）
+    * 是实现JSON嵌套结构的核心指针，无嵌套时为NULL
+    */
     struct cJSON *child;
 
-    /* The type of the item, as above. */
+    /* 节点类型标记：区分当前节点是字符串/数字/数组/对象/null等类型
+    * cJSON定义了宏常量（如cJSON_String、cJSON_Number）对应不同类型
+    */
     int type;
 
-    /* The item's string, if type==cJSON_String  and type == cJSON_Raw */
+    /* 字符串类型值存储：仅当type为cJSON_String/cJSON_Raw时有效
+    * 如JSON中"name":"Jack"，valuestring存储"Jack"
+    */
     char *valuestring;
-    /* writing to valueint is DEPRECATED, use cJSON_SetNumberValue instead */
+    /* 整数值存储（已废弃，推荐用cJSON_SetNumberValue）：仅当type为cJSON_Number且值为整数时有效
+    * 如JSON中"width":1920，valueint存储1920
+    */
     int valueint;
-    /* The item's number, if type==cJSON_Number */
+    /* 浮点数值存储：仅当type为cJSON_Number时有效（兼容整数/浮点数）
+    * 如JSON中"frame rate":24.5，valuedouble存储24.5
+    */
     double valuedouble;
-
-    /* The item's name string, if this item is the child of, or is in the list of subitems of an object. */
+    /* 节点键名存储：仅当当前节点是对象的子节点时有效
+    * 如JSON中"name":"Jack"，string存储"name"（键），valuestring存储"Jack"（值）
+    */
     char *string;
 } cJSON;
+
 
 typedef struct cJSON_Hooks
 {
