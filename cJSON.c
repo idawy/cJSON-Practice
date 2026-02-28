@@ -1122,7 +1122,15 @@ static parse_buffer *skip_utf8_bom(parse_buffer * const buffer)
 
     return buffer;
 }
-
+/*
+* cJSON_ParseWithOpts：带参数的JSON解析函数（cJSON_Parse的底层实现）
+* 功能：比cJSON_Parse更灵活，可设置解析的额外规则
+* 简单说明参数：
+* 1. value：要解析的JSON字符串（和cJSON_Parse一样）；
+* 2. return_parse_end：进阶参数，不用管（返回解析结束的位置）；
+* 3. require_null_terminated：进阶参数，不用管（是否要求字符串以NULL结尾）；
+* 返回值：解析成功返回结果，失败返回NULL
+*/
 CJSON_PUBLIC(cJSON *) cJSON_ParseWithOpts(const char *value, const char **return_parse_end, cJSON_bool require_null_terminated)
 {
     size_t buffer_length;
