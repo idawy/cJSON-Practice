@@ -1321,7 +1321,14 @@ fail:
     return NULL;
 }
 
-/* Render a cJSON item/entity/structure to text. */
+/*
+* cJSON_Print：把JSON解析结果转回字符串（解析的逆操作）
+* 功能：输入cJSON_Parse解析后的结果，输出格式化的JSON字符串
+* 简单说明：
+* 1. 参数item：cJSON_Parse返回的解析结果（要转回字符串的JSON对象）；
+* 2. 返回值：成功返回JSON字符串，失败返回NULL；
+* 大一理解：这是“解析（字符串→结构体）”的逆过程（结构体→字符串）
+*/
 CJSON_PUBLIC(char *) cJSON_Print(const cJSON *item)
 {
     return (char*)print(item, true, &global_hooks);
