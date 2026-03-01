@@ -249,7 +249,14 @@ static cJSON *cJSON_New_Item(const internal_hooks * const hooks)
     return node;
 }
 
-/* Delete a cJSON structure. */
+/*
+* cJSON_Delete：释放JSON解析后占用的内存
+* 功能：用完解析后的JSON结果后，调用这个函数释放内存（避免内存浪费）
+* 简单说明：
+* 1. 参数item：要释放的JSON解析结果（cJSON_Parse返回的那个结果）；
+* 2. 返回值：无（void），只做释放操作；
+* 大一重点：C语言里用完内存要手动释放，不然会造成内存泄漏
+*/
 CJSON_PUBLIC(void) cJSON_Delete(cJSON *item)
 {
     cJSON *next = NULL;
