@@ -1333,7 +1333,14 @@ CJSON_PUBLIC(char *) cJSON_Print(const cJSON *item)
 {
     return (char*)print(item, true, &global_hooks);
 }
-
+/*
+* cJSON_PrintUnformatted：无格式输出JSON字符串（cJSON_Print的简化版）
+* 功能：和cJSON_Print作用一样，但输出的字符串没有换行/空格（更紧凑）
+* 简单对比（大一易懂）：
+* - cJSON_Print：输出带换行/缩进的“好看”字符串（方便人看）；
+* - cJSON_PrintUnformatted：输出无格式的紧凑字符串（方便程序传输）；
+* 参数/返回值：和cJSON_Print完全一样
+*/
 CJSON_PUBLIC(char *) cJSON_PrintUnformatted(const cJSON *item)
 {
     return (char*)print(item, false, &global_hooks);
