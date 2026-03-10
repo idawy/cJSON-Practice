@@ -255,7 +255,7 @@ static cJSON *cJSON_New_Item(const internal_hooks * const hooks)
 * 简单说明：
 * 1. 参数item：要释放的JSON解析结果（cJSON_Parse返回的那个结果）；
 * 2. 返回值：无（void），只做释放操作；
-* 大一重点：C语言里用完内存要手动释放，不然会造成内存泄漏
+* C语言里用完内存要手动释放，不然会造成内存泄漏
 */
 CJSON_PUBLIC(void) cJSON_Delete(cJSON *item)
 {
@@ -1236,7 +1236,7 @@ fail:
 /*
 * cJSON_Parse：解析JSON字符串的入口函数
 * 功能：传入JSON格式的字符串（比如"{\"name\":\"Tom\"}"），返回解析后的结果
-* 简单说明：
+* 说明：
 * 1. 这个函数是给用户用的简单版本，内部会调用更详细的解析函数；
 * 2. 参数value就是要解析的JSON字符串；
 * 3. 解析成功返回结果，失败返回NULL（空）
@@ -1324,10 +1324,9 @@ fail:
 /*
 * cJSON_Print：把JSON解析结果转回字符串（解析的逆操作）
 * 功能：输入cJSON_Parse解析后的结果，输出格式化的JSON字符串
-* 简单说明：
+* 说明：
 * 1. 参数item：cJSON_Parse返回的解析结果（要转回字符串的JSON对象）；
 * 2. 返回值：成功返回JSON字符串，失败返回NULL；
-* 大一理解：这是“解析（字符串→结构体）”的逆过程（结构体→字符串）
 */
 CJSON_PUBLIC(char *) cJSON_Print(const cJSON *item)
 {
@@ -1387,7 +1386,7 @@ CJSON_PUBLIC(char *) cJSON_PrintWithIndent(const cJSON *item, int indent)
 * cJSON_PrintUnformatted：无格式输出JSON字符串
 * 功能：和cJSON_Print作用一样，但输出的字符串没有换行/空格
 * 对比：
-* - cJSON_Print：输出带换行/缩进的“好看”字符串（方便人看）；
+* - cJSON_Print：输出带换行/缩进的字符串；
 * - cJSON_PrintUnformatted：输出无格式的紧凑字符串（方便程序传输）；
 * 参数/返回值：和cJSON_Print完全一样
 */
