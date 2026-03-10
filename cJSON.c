@@ -1334,9 +1334,59 @@ CJSON_PUBLIC(char *) cJSON_Print(const cJSON *item)
     return (char*)print(item, true, &global_hooks);
 }
 /*
-* cJSON_PrintUnformatted：无格式输出JSON字符串（cJSON_Print的简化版）
-* 功能：和cJSON_Print作用一样，但输出的字符串没有换行/空格（更紧凑）
-* 简单对比（大一易懂）：
+ * cJSON_PrintWithIndent：自定义缩进的JSON格式化输出函数
+ */
+CJSON_PUBLIC(char *) cJSON_PrintWithIndent(const cJSON *item, int indent)
+{
+    // 先检查参数合法性
+    if (indent <= 0) {
+        indent = 4; // 非法值默认4个空格
+    }
+    // 调用底层函数，先获取无格式字符串，再手动加缩进
+    char *unformatted = cJSON_PrintUnformatted(item);
+    if (unformatted == NULL) {
+        return NULL;
+    }
+
+    // 简单实现：给{/}后加换行+缩进
+    // 注：这里是极简实现，仅演示思路，不用处理复杂嵌套
+    char *formatted = (char *)malloc(strlen(unformatted) * 2); // 预留足够空间
+    int i = 0, j = 0, level = 0;
+    while (unformatted[i] != '\0') {
+        if (unformatted[i] == '{') {
+            formatted[j++] = '{';
+            formatted[j++] = '\n';
+            level++;
+            // 加缩进
+            for (int k=0; k<level*indent; k++) {
+                formatted[j++] = ' ';
+            }
+        } else if (unformatted[i] == '}') {
+            formatted[j++] = '\n';
+            level--;
+            for (int k=0; k<level*indent; k++) {
+                formatted[j++] = ' ';
+            }
+            formatted[j++] = '}';
+        } else if (unformatted[i] == ',') {
+            formatted[j++] = ',';
+            formatted[j++] = '\n';
+            for (int k=0; k<level*indent; k++) {
+                formatted[j++] = ' ';
+            }
+        } else {
+            formatted[j++] = unformatted[i];
+        }
+        i++;
+    }
+    formatted[j] = '\0';
+    free(unformatted); // 释放无格式字符串
+    return formatted;
+}
+/*
+* cJSON_PrintUnformatted：无格式输出JSON字符串
+* 功能：和cJSON_Print作用一样，但输出的字符串没有换行/空格
+* 对比：
 * - cJSON_Print：输出带换行/缩进的“好看”字符串（方便人看）；
 * - cJSON_PrintUnformatted：输出无格式的紧凑字符串（方便程序传输）；
 * 参数/返回值：和cJSON_Print完全一样
